@@ -1,11 +1,11 @@
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import './App.css'
-import { ConvexReactClient } from 'convex/react'
-import { RedirectToSignIn, SignedIn, SignedOut, useAuth } from '@clerk/clerk-react'
+import { Authenticated, ConvexReactClient, Unauthenticated } from 'convex/react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import HomePage from './pages/Home'
 import SignInPage from './pages/SignIn'
 import DashboardPage from './pages/Dashboard'
+import { RedirectToSignIn, useAuth } from '@clerk/clerk-react'
 
 const convex = new ConvexReactClient(
   import.meta.env.VITE_CONVEX_URL,)
@@ -13,30 +13,26 @@ const convex = new ConvexReactClient(
 function App() {
   
   return (
-    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/sign-in/*" element={<SignInPage />} />
-
-          <Route
-            path='/dashboard'
-            element={
-              <>
-                <SignedIn>
-                  <DashboardPage />
-                </SignedIn>
-                <SignedOut>
-                  <RedirectToSignIn />
-                </SignedOut>
-              </>
-            }
-          
-          />
-
-          
-        </Routes>
-      </BrowserRouter>
+       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/sign-in/*" element={<SignInPage />} />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <>
+                            <Authenticated>
+                                <DashboardPage />
+                            </Authenticated>
+                            <Unauthenticated>
+                                <RedirectToSignIn />
+                            </Unauthenticated>
+                        </>
+                    }
+                />
+            </Routes>
+        </BrowserRouter>
     </ConvexProviderWithClerk>
   )
 }
